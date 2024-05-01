@@ -8,7 +8,7 @@ python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --pa
 python mykotlinc.py test.kt && ^
 python mykotlinc.py test.kt --clear && ^
 python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear
-
+python mykotlinc.py --help
 @REM "./mykotlinc" test.kt
 
 @REM "./mykotlinc" test.kt -w --no-rebuild --configuration-cache --parallel --daemon --build-cache

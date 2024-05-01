@@ -1,6 +1,8 @@
 # Kotlin Single-File Command-Line Compilation Tool
 
-This simple Kotlin single-file command-line compilation tool was developed for learning and practicing Kotlin. It uses Gradle as a wrapper to enhance compilation speed, reducing the compile time to approximately 1 second.
+This simple Kotlin single-file command-line compilation tool was developed for learning and practicing Kotlin.
+
+It uses Gradle as a wrapper to enhance compilation speed, reducing the compile time to approximately 1 second.
 
 **Note:** The command-line compilation tool provided by the official Kotlin team is relatively slow (perhaps it's just me, but even after tweaking numerous parameters, the speed remains slow??), and it takes more than 6 seconds even for compiling and running very small code snippets.
 However, I do not wish to create a separate Gradle project for each small code snippet for compilation and execution.
@@ -49,6 +51,21 @@ Additional Gradle command-line arguments can be appended:
 
 ```bash
 python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache"
+```
+
+```bash
+D:\KotlinCompiler\mykotlinc>python mykotlinc.py --help
+usage: mykotlinc.py [-h] [--clear] [--params PARAMS] file_path
+
+Compile Kotlin files.
+
+positional arguments:
+  file_path        Path to the Kotlin file.
+
+options:
+  -h, --help       show this help message and exit
+  --clear          Clear build before compiling.
+  --params PARAMS  Additional other gradle parameters for the compiler.
 ```
 
 ## run test.kt

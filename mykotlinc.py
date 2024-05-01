@@ -207,7 +207,10 @@ def parse_arguments():
         "--clear", action="store_true", help="Clear build before compiling."
     )
     parser.add_argument(
-        "--params", type=str, default="", help="Additional parameters for the compiler."
+        "--params",
+        type=str,
+        default="",
+        help="Additional other gradle parameters for the compiler.",
     )
     return parser.parse_args()
 
