@@ -13,4 +13,7 @@ mykotlinc.exe D:\KotlinCompiler\mykotlinc\test.kt --params "-w --no-rebuild --co
 
 mykotlinc.exe D:\KotlinCompiler\mykotlinc\test.kt --clear --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" 
 
-mykotlinc -h
+
+mykotlinc.exe test.kt --clear
+
+mykotlinc.exe -h

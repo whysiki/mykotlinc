@@ -56,6 +56,18 @@ Additional Gradle command-line arguments can be appended:
 python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache"
 ```
 
+use executable file that was complied by c++
+
+```bash
+mykotlinc.exe D:\KotlinCompiler\mykotlinc\test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear
+
+mykotlinc.exe D:\KotlinCompiler\mykotlinc\test.kt --clear --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6"
+
+mykotlinc.exe test.kt --clear
+
+mykotlinc.exe -h
+```
+
 ```bash
 D:\KotlinCompiler\mykotlinc>python mykotlinc.py --help
 usage: mykotlinc.py [-h] [--clear] [--params PARAMS] file_path
