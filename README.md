@@ -51,13 +51,6 @@ Additional Gradle command-line arguments can be appended:
 python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache"
 ```
 
-Alternatively, use directly the generated executable file:
-
-```bash
-"./mykotlinc" test.kt
-"./mykotlinc" test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache"
-```
-
 ## run test.kt
 
 ```powershell
