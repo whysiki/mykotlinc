@@ -6,8 +6,6 @@ from hashlib import md5
 import shelve
 import argparse
 
-# from rich import print
-
 # The principle of this program is that when a Kotlin code file is executed, the Kotlin code will replace the contents of Helloworld.kt and run.
 # When the Kotlin code file is modified, the code in Helloworld.kt is updated and rerun; otherwise, it is not updated.
 
@@ -50,9 +48,6 @@ for i in template_files_name:
         Content_templat_path_dict[i] = template_path
 
 
-# current_path = CurrentPath
-
-
 def get_file_hash(file_path: str):
     hasher = md5()
     with open(file_path, "rb") as f:
@@ -62,7 +57,7 @@ def get_file_hash(file_path: str):
 
 
 def update_hash(
-    filename_filepath_dict: dict[str, str],  # Add type hints to the parameter
+    filename_filepath_dict: dict[str, str],
     hash_file_path: str = path.join(CurrentPath, "template", "hash.db"),
     update_file_name: str = "",
 ):
@@ -79,7 +74,7 @@ def update_hash(
 
 def template_file_is_modify(
     file_name: str,
-    filename_filepath_dict: dict[str, str],  # Add type hints to the parameter
+    filename_filepath_dict: dict[str, str],
     hash_file_path: str = path.join(CurrentPath, "template", "hash.db"),
 ):
     with shelve.open(hash_file_path) as s:
@@ -110,7 +105,7 @@ def make_most_simple_gradle_kotlin_project(current_path: str = CurrentPath):
             ):
                 with open(path_Helloworld, "w") as ff:
                     ff.write(contentdict["Helloworld.kt"])
-                print("更新 Helloworld.kt")
+                print("updated Helloworld.kt")
                 update_hash(
                     filename_filepath_dict=Content_templat_path_dict,
                     update_file_name="Helloworld.kt",
