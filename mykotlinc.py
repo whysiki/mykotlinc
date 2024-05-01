@@ -1,6 +1,6 @@
 from os import path, makedirs
 from subprocess import run, PIPE
-from sys import exit, argv
+from sys import exit
 from shutil import rmtree
 from hashlib import md5
 import shelve
@@ -28,7 +28,7 @@ import argparse
 # CurrentPath=path.dirname(path.abspath(__file__))
 CurrentPath = path.dirname(__file__)
 Content = {}
-Content_templat_path_dict = {}
+Content_templat_path_dict: dict[str, str] = {}
 template_files_name = {
     "Helloworld.kt",
     "build.gradle",
@@ -53,7 +53,7 @@ for i in template_files_name:
 # current_path = CurrentPath
 
 
-def get_file_hash(file_path):
+def get_file_hash(file_path: str):
     hasher = md5()
     with open(file_path, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""):
@@ -62,7 +62,7 @@ def get_file_hash(file_path):
 
 
 def update_hash(
-    filename_filepath_dict: dict,
+    filename_filepath_dict: dict[str, str],  # Add type hints to the parameter
     hash_file_path: str = path.join(CurrentPath, "template", "hash.db"),
     update_file_name: str = "",
 ):
@@ -78,8 +78,8 @@ def update_hash(
 
 
 def template_file_is_modify(
-    file_name,
-    filename_filepath_dict: dict,
+    file_name: str,
+    filename_filepath_dict: dict[str, str],  # Add type hints to the parameter
     hash_file_path: str = path.join(CurrentPath, "template", "hash.db"),
 ):
     with shelve.open(hash_file_path) as s:
@@ -91,7 +91,7 @@ def template_file_is_modify(
 def make_most_simple_gradle_kotlin_project(current_path: str = CurrentPath):
     # read from template
 
-    contentdict: dict = Content
+    contentdict: dict[str, str] = Content
 
     try:
         path_hello_kotlin: str = path.join(current_path, "src", "main", "kotlin")
@@ -167,7 +167,7 @@ def mycompilter(
             f.write(write_code)
             return True
 
-    def delete_build(project_path=project_path):
+    def delete_build(project_path: str = project_path):
         if project_path != CurrentPath:
             rmtree(project_path)
             print(f"Cleared build in {project_path} ")

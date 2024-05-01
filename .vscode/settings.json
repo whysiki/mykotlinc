@@ -1,5 +1,8 @@
 {
   "code-runner.executorMapByFileExtension": {
     ".kt": "cd $dir && python -u mykotlinc.py $fileName --clear --params \"-w --no-rebuild --configuration-cache --parallel --daemon --build-cache\""
-  }
+  },
+  // 设置python类型检查为严格
+  // "python.languageServer": "Pylance",
+  "python.analysis.typeCheckingMode": "strict"
 }
