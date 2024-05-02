@@ -43,9 +43,15 @@ set "commands[0]=python mykotlinc.py test.kt --params "-w --no-rebuild --configu
 set "commands[1]=python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
 set "commands[2]=mykotlinc.exe test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
 set "commands[3]=mykotlinc.exe test.kt --clear --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6""
-set "commands[4]=mykotlinc.exe test.kt"
+set "commands[4]=mykotlinc.exe test.kt --clear"
+set "commands[5]=mykotlinc.exe test2.kt --clear"
+set "commands[6]=python mykotlinc.py test2.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
+set "commands[7]=python mykotlinc.py test2.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
+set "commands[8]=mykotlinc.exe test2.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
+set "commands[9]=mykotlinc.exe test2.kt --clear --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6""
 
-for /L %%i in (0,1,4) do (
+
+for /L %%i in (0,1,9) do (
     echo executing: !commands[%%i]!
 
     for /f "tokens=1-4 delims=:.," %%a in ("!time!") do (
@@ -63,3 +69,5 @@ for /L %%i in (0,1,4) do (
 )
 
 endlocal
+
+
