@@ -28,6 +28,7 @@ typedef struct
 
 CmdOptions parseCmdOptions(int argc, char *argv[]);
 void print(const auto &s);
+void create_directories_if_not_exists(const std::vector<std::string> &directories);
 std::string readFile(const std::string &filename);
 std::string getFileHash(const std::string &filename);
 std::string getCurrentDirectory();
@@ -156,6 +157,7 @@ std::map<std::string, TemplateFile> getAllTemplateFile(const std::string &direct
 
 bool saveStringToFile(const std::string &filename, const std::string &content)
 {
+    // Create directories if not exists
     std::filesystem::path filePath(filename);
     if (filePath.has_parent_path() && !std::filesystem::exists(filePath.parent_path()))
     {
@@ -171,6 +173,16 @@ bool saveStringToFile(const std::string &filename, const std::string &content)
     file << content;
     file.close();
     return true;
+}
+void create_directories_if_not_exists(const std::vector<std::string> &directories)
+{
+    for (const auto &directory : directories)
+    {
+        if (!std::filesystem::exists(directory))
+        {
+            std::filesystem::create_directory(directory);
+        }
+    }
 }
 
 bool buildTargetDirectoryStructure(const std::string &targetBuildDirectory, std::map<std::string, TemplateFile> *template_files_dict)
@@ -188,40 +200,23 @@ bool buildTargetDirectoryStructure(const std::string &targetBuildDirectory, std:
             std::filesystem::create_directory(buildDirectory);
         }
     }
-    std::string srcDirectory = buildDirectory + "\\src";
-    if (!std::filesystem::exists(srcDirectory))
-    {
-        std::filesystem::create_directory(srcDirectory);
-    }
-    std::string mainDirectory = srcDirectory + "\\main";
-    if (!std::filesystem::exists(mainDirectory))
-    {
-        std::filesystem::create_directory(mainDirectory);
-    }
-    std::string kotlinDirectory = mainDirectory + "\\kotlin";
-    if (!std::filesystem::exists(kotlinDirectory))
-    {
-        std::filesystem::create_directory(kotlinDirectory);
-    }
-    std::string resourcesDirectory = mainDirectory + "\\resources";
-    if (!std::filesystem::exists(resourcesDirectory))
-    {
-        std::filesystem::create_directory(resourcesDirectory);
-    }
+    std::vector<std::string> directories = {
+        buildDirectory + "\\src",
+        buildDirectory + "\\src\\main",
+        buildDirectory + "\\src\\main\\kotlin",
+        buildDirectory + "\\src\\main\\resources"};
+
+    std::string kotlinDirectory = buildDirectory + "\\src\\main\\kotlin";
     for (const auto &templateFile : *template_files_dict)
     {
         std::string filename = templateFile.first;
         std::string content = templateFile.second.content;
-        std::string tempBuildFilePath = "";
-        if (filename == "Helloworld.kt")
+        std::string tempBuildFilePath = (filename == "Helloworld.kt") ? (kotlinDirectory + "\\" + filename) : (buildDirectory + "\\" + filename);
+        std::string currentContent = std::filesystem::exists(tempBuildFilePath) ? readFile(tempBuildFilePath) : "";
+
+        if (strip(currentContent) != strip(content))
         {
-            saveStringToFile(kotlinDirectory + "\\" + filename, content);
-            tempBuildFilePath = kotlinDirectory + "\\" + filename;
-        }
-        else
-        {
-            saveStringToFile(buildDirectory + "\\" + filename, content);
-            tempBuildFilePath = buildDirectory + "\\" + filename;
+            saveStringToFile(tempBuildFilePath, content);
         }
         (*template_files_dict)[filename].tempBuildFilePath = tempBuildFilePath;
         std::string tempBuildFilePathHash = getFileHash(tempBuildFilePath);
