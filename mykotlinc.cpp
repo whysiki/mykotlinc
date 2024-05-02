@@ -1,4 +1,4 @@
-#include "sometools.h" // 引入自定义的工具函数
+#include "sometools.h"
 // cl compile with /std:c++latest
 #define TEMPLATE_FILE_NAME_VECTOR \
     std::vector<std::string> { "Helloworld.kt", "build.gradle", "gradlew", "gradlew.bat", "run.bat", "settings.gradle", "gradle.properties" }
@@ -39,10 +39,9 @@ bool mykotlinc(CmdOptions options)
     return true;
 }
 
-int main(int argc, char *argv[]) // int argc, char* argv[]
+int main(int argc, char *argv[])
 {
     // CmdOptions options = { "D:\\KotlinCompiler\\mykotlinc\\test.kt", true, "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" };
-    //
     if (argc <= 1)
     {
         print("usage:\n mykotlinc [-h] [--clear] [--params PARAMS] file_path \n mykotlinc file_path [--clear] [--params PARAMS]");

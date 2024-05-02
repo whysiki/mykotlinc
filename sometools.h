@@ -26,9 +26,26 @@ typedef struct
     std::string params;
 } CmdOptions;
 
-// 解析命令行参数，返回CmdOptions对象
-// mykotlinc -f main.kt -c -p "-include-runtime -d out.jar"
-// mykotlinc -f <file_path> [-c] [-p <params>]
+CmdOptions parseCmdOptions(int argc, char *argv[]);
+void print(const auto &s);
+std::string readFile(const std::string &filename);
+std::string getFileHash(const std::string &filename);
+std::string getCurrentDirectory();
+std::map<std::string, TemplateFile> getAllTemplateFile(const std::string &directoryPath, const std::vector<std::string> &templateFileNameVector);
+bool saveStringToFile(const std::string &filename, const std::string &content);
+bool buildTargetDirectoryStructure(const std::string &targetBuildDirectory, std::map<std::string, TemplateFile> *template_files_dict);
+bool removeDirectory(const std::string &directoryPath, std::map<std::string, TemplateFile> *template_files_dict);
+std::string executeCommand(const char *cmd);
+std::string lstrip(const std::string &s);
+std::string rstrip(const std::string &s);
+std::string strip(const std::string &s);
+//
+//
+//
+//
+//
+//
+//
 CmdOptions parseCmdOptions(int argc, char *argv[])
 {
     namespace po = boost::program_options;
@@ -62,7 +79,6 @@ CmdOptions parseCmdOptions(int argc, char *argv[])
         std::cerr << "File path is required" << std::endl;
         exit(1);
     }
-    // 检查文件路径是否存在
     if (!std::filesystem::exists(options.filePath))
     {
         std::cerr << "File not found: " << options.filePath << std::endl;
@@ -72,12 +88,11 @@ CmdOptions parseCmdOptions(int argc, char *argv[])
     return options;
 }
 
-// C++20 auto parameter 支持
+// C++20 auto parameter
 void print(const auto &s)
 {
     std::cout << s << std::endl;
 }
-// 读取一个文件的内容
 std::string readFile(const std::string &filename)
 {
     std::ifstream file(filename);
@@ -89,7 +104,6 @@ std::string readFile(const std::string &filename)
     std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     return content;
 }
-// 获取一个文件的哈希值
 std::string getFileHash(const std::string &filename)
 {
     std::ifstream file(filename, std::ios::binary);
@@ -101,7 +115,7 @@ std::string getFileHash(const std::string &filename)
     std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     return std::to_string(std::hash<std::string>{}(content));
 }
-// 获取当前目录，需要C++17支持，不能超过MAX_PATH长度
+// C++17
 std::string getCurrentDirectory()
 {
     char buffer[MAX_PATH];
@@ -111,7 +125,6 @@ std::string getCurrentDirectory()
     std::string directory = filePath.substr(0, found);
     return directory;
 }
-// 获取所有模板文件，参数为模板文件目录路径，返回值为模板文件字典，key为文件名，value为模板文件对象
 std::map<std::string, TemplateFile> getAllTemplateFile(const std::string &directoryPath, const std::vector<std::string> &templateFileNameVector)
 {
 
@@ -120,12 +133,9 @@ std::map<std::string, TemplateFile> getAllTemplateFile(const std::string &direct
     {
         if (std::filesystem::is_regular_file(entry))
         {
-            // 获取文件名
             std::string filename = entry.path().filename().string();
-            // 判断文件名是否在模板文件列表中
             if (std::find(templateFileNameVector.begin(), templateFileNameVector.end(), filename) != templateFileNameVector.end())
             {
-                // 读取文件内容
                 std::ifstream file(entry.path());
                 if (!file)
                 {
@@ -133,13 +143,10 @@ std::map<std::string, TemplateFile> getAllTemplateFile(const std::string &direct
                     continue;
                 }
                 std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-                // 获取文件路径
                 std::string path = entry.path().string();
-                // 创建模板文件对象
                 std::string tempBuildFilePath = "";
                 std::string tempBuildFilePathHash = "";
                 TemplateFile templateFile = {path, content, tempBuildFilePath, tempBuildFilePathHash};
-                // 将模板文件对象添加到字典中
                 template_files_dict[filename] = templateFile;
             }
         }
@@ -147,17 +154,14 @@ std::map<std::string, TemplateFile> getAllTemplateFile(const std::string &direct
     return template_files_dict;
 }
 
-//// 保存字符串到指定文件名，参数为文件名和字符串内容，如果文件存在则覆盖，如果文件不存在则创建，并自动创建文件的父级目录
 bool saveStringToFile(const std::string &filename, const std::string &content)
 {
-    // 创建文件的父级目录
     std::filesystem::path filePath(filename);
     if (filePath.has_parent_path() && !std::filesystem::exists(filePath.parent_path()))
     {
         std::filesystem::create_directories(filePath.parent_path());
     }
 
-    // 保存字符串到文件
     std::ofstream file(filename);
     if (!file)
     {
@@ -169,10 +173,8 @@ bool saveStringToFile(const std::string &filename, const std::string &content)
     return true;
 }
 
-// 构建目标目录结构
 bool buildTargetDirectoryStructure(const std::string &targetBuildDirectory, std::map<std::string, TemplateFile> *template_files_dict)
 {
-    // 创建build目录
     std::string buildDirectory = targetBuildDirectory;
     if (!std::filesystem::exists(buildDirectory))
     {
@@ -186,42 +188,31 @@ bool buildTargetDirectoryStructure(const std::string &targetBuildDirectory, std:
             std::filesystem::create_directory(buildDirectory);
         }
     }
-    // 创建src目录
     std::string srcDirectory = buildDirectory + "\\src";
     if (!std::filesystem::exists(srcDirectory))
     {
         std::filesystem::create_directory(srcDirectory);
     }
-    // 创建main目录
     std::string mainDirectory = srcDirectory + "\\main";
     if (!std::filesystem::exists(mainDirectory))
     {
         std::filesystem::create_directory(mainDirectory);
     }
-    // 创建kotlin目录
     std::string kotlinDirectory = mainDirectory + "\\kotlin";
     if (!std::filesystem::exists(kotlinDirectory))
     {
         std::filesystem::create_directory(kotlinDirectory);
     }
-    // 创建resources目录
     std::string resourcesDirectory = mainDirectory + "\\resources";
     if (!std::filesystem::exists(resourcesDirectory))
     {
         std::filesystem::create_directory(resourcesDirectory);
     }
-    // 保存模板文件到目标目录
     for (const auto &templateFile : *template_files_dict)
     {
-        // 获取文件名
         std::string filename = templateFile.first;
-        // 获取文件内容
         std::string content = templateFile.second.content;
         std::string tempBuildFilePath = "";
-
-        // 模板文件路径
-        // std::string path = templateFile.second.templateFilePath;
-        // 保存文件到目标目录
         if (filename == "Helloworld.kt")
         {
             saveStringToFile(kotlinDirectory + "\\" + filename, content);
@@ -232,17 +223,13 @@ bool buildTargetDirectoryStructure(const std::string &targetBuildDirectory, std:
             saveStringToFile(buildDirectory + "\\" + filename, content);
             tempBuildFilePath = buildDirectory + "\\" + filename;
         }
-        // 更新模板文件对象的tempBuildFilePath
         (*template_files_dict)[filename].tempBuildFilePath = tempBuildFilePath;
-        // 计算文件哈希值
         std::string tempBuildFilePathHash = getFileHash(tempBuildFilePath);
-        // 更新模板文件对象的tempBuildFilePathHash
         (*template_files_dict)[filename].tempBuildFilePathHash = tempBuildFilePathHash;
     }
     return true;
 }
 
-// 删除目录及其子目录和文件
 bool removeDirectory(const std::string &directoryPath, std::map<std::string, TemplateFile> *template_files_dict)
 {
     if (!std::filesystem::exists(directoryPath))
@@ -250,7 +237,6 @@ bool removeDirectory(const std::string &directoryPath, std::map<std::string, Tem
         return false;
     }
     std::filesystem::remove_all(directoryPath);
-    // 更新模板文件对象的tempBuildFilePath
     for (auto &templateFile : *template_files_dict)
     {
         templateFile.second.tempBuildFilePath = "";
@@ -258,45 +244,33 @@ bool removeDirectory(const std::string &directoryPath, std::map<std::string, Tem
     }
     return true;
 }
-
-// 执行命令，返回命令执行结果
 std::string executeCommand(const char *cmd)
 {
-    std::array<char, 128> buffer; // 定义了一个字符数组 buffer，用于存储从子进程读取的数据。
+    std::array<char, 128> buffer;
     std::string result;
-    // 创建了一个管道。_popen 函数执行一个命令，并返回一个指向子进程的标准输出的 FILE 指针。
-    // std::unique_ptr 确保 FILE 指针在离开作用域时被正确关闭。
     std::unique_ptr<FILE, decltype(&_pclose)> pipe(_popen(cmd, "r"), _pclose);
     if (!pipe)
     {
-        // 抛出一个运行时错误。如果 _popen 函数失败，pipe 就会是一个空指针。
         throw std::runtime_error("popen() failed!");
     }
-    // fgets 函数从 pipe 指向的 FILE 对象中读取最多 buffer.size() 个字符，并将它们存储到 buffer 中。
-    // 如果读取成功，fgets 返回一个指向 buffer 的指针；如果到达文件末尾，它返回一个空指针。
     while (fgets(buffer.data(), (int)(buffer.size()), pipe.get()) != nullptr)
     {
         result += buffer.data();
     }
     return result;
 }
-// 去除字符串左侧的空白字符
 std::string lstrip(const std::string &s)
 {
     auto it = std::find_if(s.begin(), s.end(), [](char c)
                            { return !std::isspace(c); });
     return std::string(it, s.end());
 }
-
-// 去除字符串右侧的空白字符
 std::string rstrip(const std::string &s)
 {
     auto it = std::find_if(s.rbegin(), s.rend(), [](char c)
                            { return !std::isspace(c); });
     return std::string(s.begin(), it.base());
 }
-
-// 去除字符串两侧的空白字符
 std::string strip(const std::string &s)
 {
     return lstrip(rstrip(s));
