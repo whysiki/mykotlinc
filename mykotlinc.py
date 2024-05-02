@@ -1,3 +1,4 @@
+# encoding: utf-8
 from os import path, makedirs
 from subprocess import run, PIPE
 from sys import exit
