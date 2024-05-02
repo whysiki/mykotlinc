@@ -5,6 +5,7 @@ from shutil import rmtree
 from hashlib import md5
 import shelve
 import argparse
+from rich import print
 
 # The principle of this program is that when a Kotlin code file is executed, the Kotlin code will replace the contents of Helloworld.kt and run.
 # When the Kotlin code file is modified, the code in Helloworld.kt is updated and rerun; otherwise, it is not updated.
@@ -180,7 +181,7 @@ def mycompilter(
                 original_code = f.read()
         else:
             original_code = ""
-        if original_code == write_code:
+        if original_code.strip() == write_code.strip():
             return False
         with open(original_code_path, "w", encoding="UTF-8", errors="ignore") as f:
             f.write(write_code)

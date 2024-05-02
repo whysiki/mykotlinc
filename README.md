@@ -2,7 +2,7 @@
 
 This simple Kotlin single-file command-line compilation tool was developed for learning and practicing Kotlin.
 
-It uses Gradle as a wrapper to enhance compilation speed, reducing the compile and runnig time to approximately 1 s (for `test.kt` and `test2.kt`).
+It uses Gradle as a wrapper to enhance compilation speed, reducing the compile and runnig time to approximately 185 ms (for `test.kt` and `test2.kt`).
 
 **Note:** The command-line compilation tool provided by the official Kotlin team is relatively slow (perhaps it's just me, but even after tweaking numerous parameters, the speed remains slow??), and it takes more than 5 seconds even for compiling and running very small code snippets.
 However, I do not wish to create a separate Gradle project for each small code snippet for compilation and execution.
@@ -81,60 +81,4 @@ options:
   -h, --help       show this help message and exit
   --clear          Clear build before compiling.
   --params PARAMS  Additional other gradle parameters for the compiler.
-```
-
-## run test.kt
-
-```powershell
-PS D:\KotlinCompiler\mykotlinc> cd "d:\KotlinCompiler\mykotlinc\" ; if ($?) { python -u mykotlinc.py test.kt --clear --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache" }
-After adding 20 elements:
-Element 1
-Element 2
-Element 3
-Element 4
-Element 5
-Element 6
-Element 7
-Element 8
-Element 9
-Element 10
-Element 11
-Element 12
-Element 13
-Element 14
-Element 15
-Element 16
-Element 17
-Element 18
-Element 19
-Element 20
-
-Removing elements:
-Deleted: Element 20
-Deleted: Element 19
-Deleted: Element 18
-Deleted: Element 17
-Deleted: Element 16
-Deleted: Element 15
-Deleted: Element 14
-Deleted: Element 13
-Deleted: Element 12
-Deleted: Element 11
-Deleted: Element 10
-Deleted: Element 9
-Deleted: Element 8
-Deleted: Element 7
-Deleted: Element 6
-Deleted: Element 5
-Deleted: Element 4
-Deleted: Element 3
-Deleted: Element 2
-Deleted: Element 1
-Deleted: null
-
-After removing 20 elements:
-Configuration cache entry stored.
-
-Cleared build in D:\KotlinCompiler\mykotlinc\build\build
-Returncode:  0
 ```
