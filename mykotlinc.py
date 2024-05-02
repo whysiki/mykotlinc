@@ -26,7 +26,7 @@ import argparse
 # CurrentPath=path.dirname(path.abspath(__file__))
 CurrentPath = path.dirname(__file__)
 Content = {}
-Content_templat_path_dict: dict[str, str] = {}
+Content_templat_path_dict: dict[str, str] = {}  # filename_filepath_dict
 template_files_name = {
     "Helloworld.kt",
     "build.gradle",
@@ -36,6 +36,12 @@ template_files_name = {
     "settings.gradle",
     "gradle.properties",
 }
+project_path = path.join(CurrentPath, "build", "build")
+built_Helloworld_example_code_path = path.join(
+    project_path, "src", "main", "kotlin", "Helloworld.kt"
+)
+
+
 for i in template_files_name:
     template_path = path.join(CurrentPath, "template", i)
     with open(
@@ -49,22 +55,6 @@ for i in template_files_name:
 
 
 def get_file_hash(file_path: str) -> str:
-    """
-    Compute the MD5 hash of a file.
-
-    This function reads a file in chunks of 4096 bytes and updates the MD5 hash
-    for each chunk until the file ends. This method is efficient for large files
-    as it doesn't need to load the entire file into memory.
-
-    Args:
-        file_path (str): The path to the file for which the MD5 hash is to be computed.
-
-    Returns:
-        str: The MD5 hash of the file as a hexadecimal string.
-
-    Raises:
-        FileNotFoundError: If `file_path` does not exist.
-    """
     hasher = md5()
     with open(file_path, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""):
@@ -77,30 +67,10 @@ def update_hash(
     hash_file_path: str = path.join(CurrentPath, "temp", "hash.db"),
     update_file_name: str = "",
 ) -> None:
-    """
-    Update the hash values of files in a shelve database.
-
-    This function opens a shelve database at `hash_file_path` and updates the hash values of files.
-    If the `update_file_name` is provided, only the hash of that file is updated.
-    Otherwise, the hash values of all files in `filename_filepath_dict` are updated.
-
-    Args:
-        filename_filepath_dict (dict[str, str]): A dictionary mapping file names to file paths.
-        hash_file_path (str, optional): The path to the shelve database. Defaults to "temp/hash.db" in the current directory.
-        update_file_name (str, optional): The name of the file to update. If empty, all files are updated. Defaults to "".
-
-    Raises:
-        FileNotFoundError: If the file specified by `update_file_name` does not exist in `filename_filepath_dict`.
-
-    example:
-        update_hash(
-                    filename_filepath_dict=Content_templat_path_dict,
-                    update_file_name="Helloworld.kt",
-                )
-    """
     if path.exists(path.dirname(hash_file_path)) is False:
         makedirs(path.dirname(hash_file_path), exist_ok=True)
     with shelve.open(hash_file_path) as s:
+
         if (s.__len__() < filename_filepath_dict.__len__()) and (
             not (update_file_name)
         ):
@@ -109,12 +79,13 @@ def update_hash(
             s[update_file_name] = get_file_hash(
                 filename_filepath_dict[update_file_name]
             )
+        # print(len(s), filename_filepath_dict.__len__())
 
 
 def template_file_is_modify(
     file_name: str,
     filename_filepath_dict: dict[str, str],
-    hash_file_path: str = path.join(CurrentPath, "template", "hash.db"),
+    hash_file_path: str = path.join(CurrentPath, "temp", "hash.db"),
 ) -> bool:
     """
     Check if a template file has been modified.
@@ -133,41 +104,31 @@ def template_file_is_modify(
     Raises:
         KeyError: If `file_name` does not exist in `filename_filepath_dict`.
     """
+    if path.exists(path.dirname(hash_file_path)) is False:
+        makedirs(path.dirname(hash_file_path), exist_ok=True)
     with shelve.open(hash_file_path) as s:
         newhash = get_file_hash(filename_filepath_dict[file_name])
         oldhash = s.get(file_name)
+        if file_name == "Helloworld.kt":
+            print(f"oldhash: {oldhash} newhash: {newhash}")
         return newhash != oldhash
 
 
 def make_most_simple_gradle_kotlin_project(current_path: str = CurrentPath):
     # read from template
-
     contentdict: dict[str, str] = Content
-
     try:
-        path_hello_kotlin: str = path.join(current_path, "src", "main", "kotlin")
-        path_hello_resources: str = path.join(current_path, "src", "main", "resources")
-        makedirs(path_hello_kotlin, exist_ok=True)
-        makedirs(path_hello_resources, exist_ok=True)
-        path_Helloworld = path.join(path_hello_kotlin, "Helloworld.kt")
+        path_Helloworld: str = built_Helloworld_example_code_path
+        if not path.exists(path_Helloworld) and path.dirname(path_Helloworld):
+            makedirs(path.dirname(path_Helloworld), exist_ok=True)
         # first write
         if not path.exists(path_Helloworld):
             with open(path_Helloworld, "w") as f:
                 f.write(contentdict["Helloworld.kt"])
-        else:
-            # modify if update
-            if template_file_is_modify(
-                "Helloworld.kt", filename_filepath_dict=Content_templat_path_dict
-            ):
-                with open(path_Helloworld, "w") as ff:
-                    ff.write(contentdict["Helloworld.kt"])
-                print("updated Helloworld.kt")
-                update_hash(
-                    filename_filepath_dict=Content_templat_path_dict,
-                    update_file_name="Helloworld.kt",
-                )
-        del contentdict["Helloworld.kt"]
+        # check template files whether update, except Helloworld.kt
         for k, v in contentdict.items():
+            if k == "Helloworld.kt":
+                continue
             pathi = path.join(current_path, k)
             if not path.exists(pathi):
                 with open(
@@ -189,13 +150,15 @@ def make_most_simple_gradle_kotlin_project(current_path: str = CurrentPath):
                         errors="ignore",
                     ) as f3:
                         f3.write(v)
-                    print(f"Updated {k}")
+                    # print(f"Updated {k}")
                     update_hash(
                         filename_filepath_dict=Content_templat_path_dict,
                         update_file_name=k,
                     )
-    except Exception:
-        print("Raise unknown error!")
+    except Exception as e:
+        error_message = str(e)
+        error_type = type(e)
+        print(f"Error: {error_message} \nType: {error_type}")
         exit()
 
 
@@ -212,9 +175,14 @@ def mycompilter(
             return f.read()
 
     def change_code(write_code: str, original_code_path: str) -> bool:
-        with open(original_code_path, "w+", encoding="UTF-8", errors="ignore") as f:
-            if wirte_code == f.read():
-                return False
+        if path.exists(original_code_path):
+            with open(original_code_path, "r", encoding="UTF-8", errors="ignore") as f:
+                original_code = f.read()
+        else:
+            original_code = ""
+        if original_code == write_code:
+            return False
+        with open(original_code_path, "w", encoding="UTF-8", errors="ignore") as f:
             f.write(write_code)
             return True
 
@@ -226,9 +194,7 @@ def mycompilter(
     wirte_code = read_from_code(file_path)
     change_code(
         wirte_code,
-        original_code_path=path.join(
-            project_path, "src", "main", "kotlin", "Helloworld.kt"
-        ),
+        original_code_path=built_Helloworld_example_code_path,
     )
 
     command = (
@@ -275,7 +241,8 @@ if __name__ == "__main__":
 
     mycompilter(
         file_path=args.file_path,
-        project_path=path.join(CurrentPath, "build", "build"),
+        # project_path=path.join(CurrentPath, "build", "build"),
+        project_path=project_path,
         params=args.params,
         toclearbuild=args.clear,
     )
