@@ -1,3 +1,1 @@
 gradle run
-
-gradle hello
