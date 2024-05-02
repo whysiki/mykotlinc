@@ -1,11 +1,11 @@
 @REM @echo off
 chcp 65001
 
-@REM python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache" && ^
-@REM python mykotlinc.py test.kt && ^
-@REM python mykotlinc.py test.kt --clear && ^
-@REM python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear
-@REM python mykotlinc.py --help
+python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache" && ^
+python mykotlinc.py test.kt && ^
+python mykotlinc.py test.kt --clear && ^
+python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear && ^
+python mykotlinc.py --help
 
 @REM python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear && ^
 @REM python mykotlinc.py D:\KotlinCompiler\mykotlinc\test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear && ^
@@ -36,38 +36,38 @@ chcp 65001
 
 @REM endlocal
 
-@echo off
-setlocal enabledelayedexpansion
+@REM @echo off
+@REM setlocal enabledelayedexpansion
 
-set "commands[0]=python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
-set "commands[1]=python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
-set "commands[2]=mykotlinc.exe test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
-set "commands[3]=mykotlinc.exe test.kt --clear --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6""
-set "commands[4]=mykotlinc.exe test.kt --clear"
-set "commands[5]=mykotlinc.exe test2.kt --clear"
-set "commands[6]=python mykotlinc.py test2.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
-set "commands[7]=python mykotlinc.py test2.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
-set "commands[8]=mykotlinc.exe test2.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
-set "commands[9]=mykotlinc.exe test2.kt --clear --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6""
+@REM set "commands[0]=python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
+@REM set "commands[1]=python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
+@REM set "commands[2]=mykotlinc.exe test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
+@REM set "commands[3]=mykotlinc.exe test.kt --clear --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6""
+@REM set "commands[4]=mykotlinc.exe test.kt --clear"
+@REM set "commands[5]=mykotlinc.exe test2.kt --clear"
+@REM set "commands[6]=python mykotlinc.py test2.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
+@REM set "commands[7]=python mykotlinc.py test2.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
+@REM set "commands[8]=mykotlinc.exe test2.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
+@REM set "commands[9]=mykotlinc.exe test2.kt --clear --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6""
 
 
-for /L %%i in (0,1,9) do (
-    echo executing: !commands[%%i]!
+@REM for /L %%i in (0,1,9) do (
+@REM     echo executing: !commands[%%i]!
 
-    for /f "tokens=1-4 delims=:.," %%a in ("!time!") do (
-        set /a "start=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
-    )
+@REM     for /f "tokens=1-4 delims=:.," %%a in ("!time!") do (
+@REM         set /a "start=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
+@REM     )
 
-    call !commands[%%i]!
+@REM     call !commands[%%i]!
 
-    for /f "tokens=1-4 delims=:.," %%a in ("!time!") do (
-        set /a "end=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
-    )
+@REM     for /f "tokens=1-4 delims=:.," %%a in ("!time!") do (
+@REM         set /a "end=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
+@REM     )
 
-    set /a duration=!end!-!start!
-    echo command %%i cost in :  !duration!ms
-)
+@REM     set /a duration=!end!-!start!
+@REM     echo command %%i cost in :  !duration!ms
+@REM )
 
-endlocal
+@REM endlocal
 
 

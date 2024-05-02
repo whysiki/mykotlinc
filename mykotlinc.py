@@ -48,7 +48,23 @@ for i in template_files_name:
         Content_templat_path_dict[i] = template_path
 
 
-def get_file_hash(file_path: str):
+def get_file_hash(file_path: str) -> str:
+    """
+    Compute the MD5 hash of a file.
+
+    This function reads a file in chunks of 4096 bytes and updates the MD5 hash
+    for each chunk until the file ends. This method is efficient for large files
+    as it doesn't need to load the entire file into memory.
+
+    Args:
+        file_path (str): The path to the file for which the MD5 hash is to be computed.
+
+    Returns:
+        str: The MD5 hash of the file as a hexadecimal string.
+
+    Raises:
+        FileNotFoundError: If `file_path` does not exist.
+    """
     hasher = md5()
     with open(file_path, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""):
@@ -58,9 +74,32 @@ def get_file_hash(file_path: str):
 
 def update_hash(
     filename_filepath_dict: dict[str, str],
-    hash_file_path: str = path.join(CurrentPath, "template", "hash.db"),
+    hash_file_path: str = path.join(CurrentPath, "temp", "hash.db"),
     update_file_name: str = "",
-):
+) -> None:
+    """
+    Update the hash values of files in a shelve database.
+
+    This function opens a shelve database at `hash_file_path` and updates the hash values of files.
+    If the `update_file_name` is provided, only the hash of that file is updated.
+    Otherwise, the hash values of all files in `filename_filepath_dict` are updated.
+
+    Args:
+        filename_filepath_dict (dict[str, str]): A dictionary mapping file names to file paths.
+        hash_file_path (str, optional): The path to the shelve database. Defaults to "temp/hash.db" in the current directory.
+        update_file_name (str, optional): The name of the file to update. If empty, all files are updated. Defaults to "".
+
+    Raises:
+        FileNotFoundError: If the file specified by `update_file_name` does not exist in `filename_filepath_dict`.
+
+    example:
+        update_hash(
+                    filename_filepath_dict=Content_templat_path_dict,
+                    update_file_name="Helloworld.kt",
+                )
+    """
+    if path.exists(path.dirname(hash_file_path)) is False:
+        makedirs(path.dirname(hash_file_path), exist_ok=True)
     with shelve.open(hash_file_path) as s:
         if (s.__len__() < filename_filepath_dict.__len__()) and (
             not (update_file_name)
@@ -76,7 +115,24 @@ def template_file_is_modify(
     file_name: str,
     filename_filepath_dict: dict[str, str],
     hash_file_path: str = path.join(CurrentPath, "template", "hash.db"),
-):
+) -> bool:
+    """
+    Check if a template file has been modified.
+
+    This function compares the current hash of the file with the stored hash in a shelve database.
+    If the hashes do not match, the file has been modified.
+
+    Args:
+        file_name (str): The name of the file to check.
+        filename_filepath_dict (dict[str, str]): A dictionary mapping file names to file paths.
+        hash_file_path (str, optional): The path to the shelve database. Defaults to "template/hash.db" in the current directory.
+
+    Returns:
+        bool: True if the file has been modified, False otherwise.
+
+    Raises:
+        KeyError: If `file_name` does not exist in `filename_filepath_dict`.
+    """
     with shelve.open(hash_file_path) as s:
         newhash = get_file_hash(filename_filepath_dict[file_name])
         oldhash = s.get(file_name)

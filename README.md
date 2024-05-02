@@ -2,7 +2,7 @@
 
 This simple Kotlin single-file command-line compilation tool was developed for learning and practicing Kotlin.
 
-It uses Gradle as a wrapper to enhance compilation speed, reducing the compile time to approximately 180 ms (for `test.kt` and `test2.kt`).
+It uses Gradle as a wrapper to enhance compilation speed, reducing the compile and runnig time to approximately 1 s (for `test.kt` and `test2.kt`).
 
 **Note:** The command-line compilation tool provided by the official Kotlin team is relatively slow (perhaps it's just me, but even after tweaking numerous parameters, the speed remains slow??), and it takes more than 5 seconds even for compiling and running very small code snippets.
 However, I do not wish to create a separate Gradle project for each small code snippet for compilation and execution.
