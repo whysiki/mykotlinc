@@ -15,4 +15,3 @@ add_executable(mykotlinc mykotlinc.cpp)
 
 target_link_libraries(mykotlinc PRIVATE Boost::program_options)
 
-#需要注意架构问题
