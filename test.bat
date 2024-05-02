@@ -43,7 +43,7 @@ set "commands[0]=python mykotlinc.py test.kt --params "-w --no-rebuild --configu
 set "commands[1]=python mykotlinc.py test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
 set "commands[2]=mykotlinc.exe test.kt --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6" --clear"
 set "commands[3]=mykotlinc.exe test.kt --clear --params "-w --no-rebuild --configuration-cache --parallel --daemon --build-cache --max-workers 6""
-set "commands[4]=mykotlinc.exe test.kt --clear"
+set "commands[4]=mykotlinc.exe test.kt"
 
 for /L %%i in (0,1,4) do (
     echo executing: !commands[%%i]!
