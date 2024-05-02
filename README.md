@@ -1,20 +1,16 @@
 # Kotlin Single-File Command-Line Compilation Tool
 
-This simple Kotlin single-file command-line compilation tool was developed for learning and practicing Kotlin.
+This simple Kotlin single-file command-line compilation tool was developed for learning and practicing Kotlin. It uses Gradle as a wrapper to enhance compilation speed, reducing the compile and running time to approximately 1 second. The repeated run time was approximately 185ms.
 
-It uses Gradle as a wrapper to enhance compilation speed, reducing the compile and runnig time to approximately 1 s.The repeated run time was approximately 185ms.
+**Note:** The command-line compilation tool provided by the official Kotlin team is relatively slow (perhaps it's just me, but even after tweaking numerous parameters, the speed remains slow), and it takes more than 5 seconds even for compiling and running very small code snippets. However, I do not wish to create a separate Gradle project for each small code snippet for compilation and execution.
 
-**Note:** The command-line compilation tool provided by the official Kotlin team is relatively slow (perhaps it's just me, but even after tweaking numerous parameters, the speed remains slow??), and it takes more than 5 seconds even for compiling and running very small code snippets.
-However, I do not wish to create a separate Gradle project for each small code snippet for compilation and execution.
-
-**You can't execute an infinite loop like a real compiler.You have to finish the output, or you'll wait forever and without any output in terminal**
-**You're essentially waiting for gradle to execute and then logging it to the console.**
+**You can't execute an infinite loop like a real compiler. You have to finish the output, or you'll wait forever and without any output in the terminal. You're essentially waiting for Gradle to execute and then logging it to the console.**
 
 The Gradle configuration files are located in the template folder; modify these parameters to adjust the settings for command-line compilation.
 
 - The program works by first generating the simplest Gradle project from a file in the template.
-- When a Kotlin code file is executed, the Kotlin code replaces the contents of Helloworld.kt, and the code is run using `gradle run`.
-- When the Kotlin code file is modified, the code in Helloworld.kt is updated and rerun; otherwise, it is not updated.
+- When a Kotlin code file is executed, the Kotlin code replaces the contents of `Helloworld.kt`, and the code is run using `gradle run`.
+- When the Kotlin code file or template files are modified, the code in `Helloworld.kt` will be updated and rerun; otherwise, it is not updated.
 
 ```
 # A minimal gradle project directory structure.
